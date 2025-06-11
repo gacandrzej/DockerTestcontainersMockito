@@ -1,3 +1,6 @@
+import gac.andrzej.sklep.KafkaMessageConsumer;
+import gac.andrzej.sklep.KafkaMessageProducer;
+
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -12,6 +15,7 @@ import org.testcontainers.utility.DockerImageName;
 
 import java.time.Duration;
 import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

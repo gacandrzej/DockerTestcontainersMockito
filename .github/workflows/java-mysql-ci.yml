@@ -75,7 +75,7 @@ jobs:
 
       # Opcjonalny krok: uruchomienie głównej aplikacji (jeśli chcesz to przetestować w CI)
       - name: Run Java app (after build)
-        run: ./build/install/java-mysql-ci/bin/ShopApplication # Nazwa JARa zależy od build.gradle
+        run: ./build/install/DockerTestcontainersMockito/bin/ShopApplication # Nazwa JARa zależy od build.gradle
         env:
           DB_URL: jdbc:mysql://127.0.0.1:3306/sklep
           DB_USER: ${{ secrets.DB_USER }}

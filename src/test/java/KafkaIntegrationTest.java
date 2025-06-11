@@ -1,14 +1,13 @@
 import gac.andrzej.sklep.KafkaMessageConsumer;
 import gac.andrzej.sklep.KafkaMessageProducer;
 
-
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.containers.KafkaContainer; // Import dla KafkaContainer
+import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
@@ -34,24 +33,23 @@ class KafkaIntegrationTest {
     private static final String TEST_TOPIC = "test_topic";
     private static final String CONSUMER_GROUP_ID = "test_group";
 
-    // Definiujemy kontener Kafka. Testcontainers automatycznie uruchomi też Zookeepera.
     @Container
-    private static final KafkaContainer kafkaContainer = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.6.0")); // Użyj stabilnej wersji Kafka
+    private static final KafkaContainer kafkaContainer = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.6.0"));
 
     @BeforeEach
     void setUp() throws InterruptedException {
-        // Kontener Kafka uruchamia się automatycznie. Pobieramy adres brokerów.
         String bootstrapServers = kafkaContainer.getBootstrapServers();
 
         producer = new KafkaMessageProducer(bootstrapServers, TEST_TOPIC);
         consumer = new KafkaMessageConsumer(bootstrapServers, CONSUMER_GROUP_ID, TEST_TOPIC);
 
-        // Uruchomienie konsumenta w osobnym wątku
         consumerExecutor = Executors.newSingleThreadExecutor();
         consumerExecutor.submit(consumer);
 
-        // Czekamy chwilę, aby konsument miał czas na subskrypcję topicu i uruchomienie się
-        Thread.sleep(1000); // Daj konsumentowi czas na inicjalizację
+        // Daj konsumentowi czas na subskrypcję topicu i uruchomienie się
+        // Używamy nowej metody, aby czekać bardziej aktywnie na gotowość
+        // Jest to wstępne oczekiwanie, zanim zaczniemy wysyłać wiadomości
+        assertTrue(consumer.waitUntilMessagesReceived(0, 5000), "Consumer should be ready within timeout");
     }
 
     @AfterEach
@@ -75,14 +73,14 @@ class KafkaIntegrationTest {
     }
 
     @Test
-    void shouldProduceAndConsumeMessage() throws InterruptedException {
+    void shouldProduceAndConsumeMessage() { // Usunięto 'throws InterruptedException' bo waitUntilMessagesReceived obsługuje to wewnętrznie
         String key = "key1";
         String value = "Hello Kafka from Testcontainers!";
 
         producer.sendMessage(key, value);
 
-        // Dajemy konsumentowi czas na odebranie wiadomości
-        Thread.sleep(2000);
+        // AKTYWNE CZEKANIE NA 1 WIADOMOŚĆ ZAMIAST Thread.sleep()
+        assertTrue(consumer.waitUntilMessagesReceived(1, 5000), "Should receive one message within timeout");
 
         List<String> receivedMessages = consumer.getReceivedMessages();
         assertFalse(receivedMessages.isEmpty(), "Messages list should not be empty");
@@ -91,11 +89,12 @@ class KafkaIntegrationTest {
     }
 
     @Test
-    void shouldHandleMultipleMessages() throws InterruptedException {
+    void shouldHandleMultipleMessages() { // Usunięto 'throws InterruptedException'
         producer.sendMessage("keyA", "Message A");
         producer.sendMessage("keyB", "Message B");
 
-        Thread.sleep(2000);
+        // AKTYWNE CZEKANIE NA 2 WIADOMOŚCI ZAMIAST Thread.sleep()
+        assertTrue(consumer.waitUntilMessagesReceived(2, 5000), "Should receive two messages within timeout");
 
         List<String> receivedMessages = consumer.getReceivedMessages();
         assertEquals(2, receivedMessages.size(), "Should have received two messages");

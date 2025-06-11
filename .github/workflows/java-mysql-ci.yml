@@ -1,0 +1,74 @@
+# .github/workflows/java-mysql-ci.yml
+name: Java MySQL CI z Gradle
+
+on:
+  push:
+    branches:
+      - master # Uruchom workflow przy pushu do gałęzi master
+  workflow_dispatch: # Umożliwia ręczne uruchomienie workflow z UI GitHub
+
+jobs:
+  build:
+    runs-on: ubuntu-latest # Wybierz system operacyjny dla runnera
+
+    services:
+      # Definiujemy kontener MySQL, który będzie dostępny dla tego joba
+      mysql:
+        image: mysql:8.0 # Obraz Docker MySQL
+        env:
+          MYSQL_ROOT_PASSWORD: root # Hasło root w kontenerze (tylko do celów testowych CI)
+          MYSQL_DATABASE: sklep # Nazwa bazy danych
+          MYSQL_USER: ${{ secrets.DB_USER }} # Użytkownik z GitHub Secrets
+          MYSQL_PASSWORD: <span class="math-inline">\{\{ secrets\.DB\_PASS \}\} \# Hasło z GitHub Secrets
+ports\:
+\- 3306\:3306 \# Mapowanie portów\: 3306 na hoście do 3306 w kontenerze
+options\: \>\- \# Opcje sprawdzania zdrowia kontenera
+\-\-health\-cmd\="mysqladmin ping \-h 127\.0\.0\.1 \-u</span><span class="math-inline">MYSQL\_USER \-p</span><span class="math-inline">MYSQL\_PASSWORD \-\-silent"
+\-\-health\-interval\=10s
+\-\-health\-timeout\=5s
+\-\-health\-retries\=10 \# Więcej prób dla stabilności
+steps\:
+\- uses\: actions/checkout@v3 \# Klonuje repozytorium do runnera
+\- name\: Set up JDK 17
+uses\: actions/setup\-java@v3 \# Akcja do konfiguracji JDK
+with\:
+distribution\: 'temurin' \# Dystrybucja JDK \(np\. Adoptium\)
+java\-version\: '17' \# Wersja Javy
+cache\: 'gradle' \# Włącza cache dla zależności Gradle, przyspiesza kolejne buildy
+\- name\: Wait for MySQL to be ready \# Czekaj, aż usługa MySQL będzie gotowa
+run\: \|
+for i in \{1\.\.30\}; do \# Pętla próbująca połączenie przez 60 sekund
+if mysqladmin ping \-h 127\.0\.0\.1 \-P 3306 \-u</span>{{ secrets.DB_USER }} -p${{ secrets.DB_PASS }} --silent; then
+              echo "MySQL is up!"
+              break
+            fi
+            echo "Waiting for MySQL..."
+            sleep 2
+          done
+          # Dodatkowe sprawdzenie, czy baza danych 'sklep' jest dostępna i działa poprawnie
+          mysql -h 127.0.0.1 -P 3306 -u${{ secrets.DB_USER }} -p${{ secrets.DB_PASS }} -e "SELECT 1;" sklep > /dev/null 2>&1 || { echo "Database 'sklep' not ready yet, waiting..."; sleep 2; }
+          # Znowu upewniamy się, że MySQL jest gotowy do operacji DDL/DML
+          mysql -h 127.0.0.1 -P 3306 -u${{ secrets.DB_USER }} -p${{ secrets.DB_PASS }} -e "SHOW DATABASES;" sklep > /dev/null 2>&1 || { echo "Still waiting for database 'sklep' to be fully accessible..."; sleep 2; }
+
+      - name: Initialize database schema and data # Inicjalizuje schemat bazy danych i wstawia początkowe dane
+        # Zakładamy, że masz plik 'sklep.sql' w głównym katalogu projektu
+        run: |
+          mysql -h 127.0.0.1 -P 3306 -u${{ secrets.DB_USER }} -p${{ secrets.DB_PASS }} sklep < sklep.sql
+        env:
+          MYSQL_CLIENT_PWD: ${{ secrets.DB_PASS }} # Upewnij się, że klient MySQL może użyć hasła
+
+      - name: Build with Gradle and run tests # Kompiluje projekt i uruchamia wszystkie testy (jednostkowe i integracyjne)
+        run: ./gradlew build # Uruchamia Gradle Wrapper
+        env:
+          # Przekazujemy zmienne środowiskowe, które Twoja aplikacja (ShopApplication) będzie odczytywać
+          DB_URL: jdbc:mysql://127.0.0.1:3306/sklep
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASS: ${{ secrets.DB_PASS }}
+
+      # Opcjonalny krok: uruchomienie głównej aplikacji (jeśli chcesz to przetestować w CI)
+      - name: Run Java app (after build)
+        run: java -jar build/libs/java-mysql-ci-1.0-SNAPSHOT.jar # Nazwa JARa zależy od build.gradle
+        env:
+          DB_URL: jdbc:mysql://127.0.0.1:3306/sklep
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASS: ${{ secrets.DB_PASS }}

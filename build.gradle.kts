@@ -1,4 +1,4 @@
-import org.gradle.api.plugins.ApplicationExtension
+//import org.gradle.api.plugins.ApplicationExtension
 
 plugins {
     java          // Włącza wsparcie dla projektów Java
@@ -36,14 +36,17 @@ tasks.test {
 
 
 
-configure<org.gradle.api.plugins.ApplicationExtension> {
-    mainClass.set("gac.andrzej.sklep.ShopApplication")
-    applicationName = "sklep-app"
+// --- STANDARDOWA KONFIGURACJA PLUGINU 'application' W KOTLIN DSL ---
+// Gradle powinien rozpoznać 'application' jako rozszerzenie pluginu
+application {
+    mainClass.set("com.example.sklep.ShopApplication") // Ustawia główną klasę aplikacji
+    applicationName = "sklep-app" // Ustawia nazwę katalogu instalacji dla installDist
 }
 
-
+// --- STANDARDOWA KONFIGURACJA ZADANIA 'jar' W KOTLIN DSL ---
 tasks.jar {
     manifest {
+        // 'application' jest dostępne w tym kontekście jako odwołanie do rozszerzenia pluginu
         attributes["Main-Class"] = application.mainClass.get()
     }
 }

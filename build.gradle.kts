@@ -28,8 +28,8 @@ dependencies {
     testImplementation("org.testcontainers:mongodb:1.21.1") // Moduł Testcontainers dla MongoDB
 
     // Zależności dla Redis
-    implementation("redis.clients:jedis:5.1.3") // Klient Jedis dla Redis
-    testImplementation("org.testcontainers:redis:1.21.1") // Moduł Testcontainers dla Redis
+   // implementation("redis.clients:jedis:5.1.3") // Klient Jedis dla Redis
+   // testImplementation("org.testcontainers:redis:1.21.1") // Moduł Testcontainers dla Redis
 
     // Zależności dla Kafka
     implementation("org.apache.kafka:kafka-clients:3.7.0") // Klient Kafka

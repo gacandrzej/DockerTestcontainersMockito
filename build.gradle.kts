@@ -30,7 +30,7 @@ dependencies {
     testImplementation("org.testcontainers:testcontainers:1.19.8")
     testImplementation("org.testcontainers:junit-jupiter:1.19.8") // Integracja Testcontainers z JUnit 5
     testImplementation("org.testcontainers:mysql:1.19.8")        // Moduł Testcontainers dla MySQL
-    testImplementation("org.testcontainers:postgresql:1.19.8") // Moduł Testcontainers dla PostgreSQL
+    testImplementation("org.testcontainers:postgresql:1.21.1") // Moduł Testcontainers dla PostgreSQL
 }
 
 // Konfiguracja do uruchamiania testów z JUnit 5

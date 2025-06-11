@@ -1,10 +1,7 @@
 import gac.andrzej.sklep.KafkaMessageConsumer;
 import gac.andrzej.sklep.KafkaMessageProducer;
-
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.KafkaContainer;
@@ -12,10 +9,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
-import java.time.Duration;
-import java.util.Collections;
 import java.util.List;
-import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -49,7 +43,7 @@ class KafkaIntegrationTest {
         // Daj konsumentowi czas na subskrypcję topicu i uruchomienie się
         // Używamy nowej metody, aby czekać bardziej aktywnie na gotowość
         // Jest to wstępne oczekiwanie, zanim zaczniemy wysyłać wiadomości
-        assertTrue(consumer.waitUntilMessagesReceived(0, 5000), "Consumer should be ready within timeout");
+        Assertions.assertTrue(consumer.waitUntilMessagesReceived(0, 5000), "Consumer should be ready within timeout");
     }
 
     @AfterEach
@@ -80,12 +74,12 @@ class KafkaIntegrationTest {
         producer.sendMessage(key, value);
 
         // AKTYWNE CZEKANIE NA 1 WIADOMOŚĆ ZAMIAST Thread.sleep()
-        assertTrue(consumer.waitUntilMessagesReceived(1, 5000), "Should receive one message within timeout");
+        Assertions.assertTrue(consumer.waitUntilMessagesReceived(1, 5000), "Should receive one message within timeout");
 
         List<String> receivedMessages = consumer.getReceivedMessages();
-        assertFalse(receivedMessages.isEmpty(), "Messages list should not be empty");
-        assertEquals(1, receivedMessages.size(), "Should have received exactly one message");
-        assertEquals(value, receivedMessages.get(0), "Received message content should match sent content");
+        Assertions.assertFalse(receivedMessages.isEmpty(), "Messages list should not be empty");
+        Assertions.assertEquals(1, receivedMessages.size(), "Should have received exactly one message");
+        Assertions.assertEquals(value, receivedMessages.get(0), "Received message content should match sent content");
     }
 
     @Test
@@ -94,11 +88,11 @@ class KafkaIntegrationTest {
         producer.sendMessage("keyB", "Message B");
 
         // AKTYWNE CZEKANIE NA 2 WIADOMOŚCI ZAMIAST Thread.sleep()
-        assertTrue(consumer.waitUntilMessagesReceived(2, 5000), "Should receive two messages within timeout");
+        Assertions.assertTrue(consumer.waitUntilMessagesReceived(2, 5000), "Should receive two messages within timeout");
 
         List<String> receivedMessages = consumer.getReceivedMessages();
-        assertEquals(2, receivedMessages.size(), "Should have received two messages");
-        assertTrue(receivedMessages.contains("Message A"), "Should contain Message A");
-        assertTrue(receivedMessages.contains("Message B"), "Should contain Message B");
+        Assertions.assertEquals(2, receivedMessages.size(), "Should have received two messages");
+        Assertions.assertTrue(receivedMessages.contains("Message A"), "Should contain Message A");
+        Assertions.assertTrue(receivedMessages.contains("Message B"), "Should contain Message B");
     }
 }

@@ -1,6 +1,8 @@
+import org.gradle.api.plugins.ApplicationExtension
+
 plugins {
-    id("java")           // Włącza wsparcie dla projektów Java
-    id("application")    // Umożliwia uruchamianie aplikacji z metodą main
+    java          // Włącza wsparcie dla projektów Java
+    application   // Umożliwia uruchamianie aplikacji z metodą main
 }
 
 group = "gac.andrzej"    // Grupa projektu
@@ -15,22 +17,16 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 
-    implementation ("mysql:mysql-connector-java:8.0.33")// Sterownik JDBC dla MySQL
-
-    // Zależności testowe - scope 'test' oznacza, że są używane tylko podczas testowania
-    // JUnit 5
-    //testImplementation 'org.junit.jupiter:junit-jupiter-api:5.11.0-M1' // API JUnit 5
-   //testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.11.0-M1' // Silnik JUnit 5 do uruchamiania testów
+    implementation ("mysql:mysql-connector-java:8.0.33")
 
     // Mockito (do mockowania w testach jednostkowych)
     testImplementation ("org.mockito:mockito-core:5.11.0")
-    testImplementation ("org.mockito:mockito-junit-jupiter:5.11.0") // Integracja Mockito z JUnit 5
+    testImplementation ("org.mockito:mockito-junit-jupiter:5.11.0")
 
     // Testcontainers (do testów integracyjnych z Dockerem)
     testImplementation ("org.testcontainers:testcontainers:1.19.8")
-    testImplementation ("org.testcontainers:junit-jupiter:1.19.8")// Integracja Testcontainers z JUnit 5
-    testImplementation ("org.testcontainers:mysql:1.19.8")        // Moduł Testcontainers dla MySQL
-
+    testImplementation ("org.testcontainers:junit-jupiter:1.19.8")
+    testImplementation ("org.testcontainers:mysql:1.19.8")
 }
 
 // Konfiguracja do uruchamiania testów z JUnit 5
@@ -38,15 +34,16 @@ tasks.test {
     useJUnitPlatform()
 }
 
-//application {
-//    mainClass = 'gac.andrzej.sklep.ShopApplication'
-//}
-//
-//// WAŻNE: Upewnij się, że ten blok `jar` jest obecny i poprawnie konfiguruje Main-Class.
-//// Jeśli używasz tylko pluginu `application`, Gradle powinien to zrobić automatycznie,
-//// ale warto to sprawdzić lub dodać dla pewności.
-//jar {
-//    manifest {
-//        attributes 'Main-Class': application.mainClass.get()
-//    }
-//}
+
+
+configure<org.gradle.api.plugins.ApplicationExtension> {
+    mainClass.set("gac.andrzej.sklep.ShopApplication")
+    applicationName = "sklep-app"
+}
+
+
+tasks.jar {
+    manifest {
+        attributes["Main-Class"] = application.mainClass.get()
+    }
+}

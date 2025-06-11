@@ -73,6 +73,13 @@ jobs:
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASS: ${{ secrets.DB_PASS }}
 
+      - name: List contents of install directory # Tymczasowy krok diagnostyczny
+        run: ls -al build/install/
+
+
+      - name: List contents of bin directory # Tymczasowy krok diagnostyczny
+        run: ls -al build/install/sklep-app/bin/
+
       # Opcjonalny krok: uruchomienie głównej aplikacji (jeśli chcesz to przetestować w CI)
       - name: Run Java app (after build)
         run: ./build/install/DockerTestcontainersMockito/bin/ShopApplication # Nazwa JARa zależy od build.gradle

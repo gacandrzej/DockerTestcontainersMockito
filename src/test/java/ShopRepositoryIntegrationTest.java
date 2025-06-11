@@ -26,21 +26,21 @@ class ShopRepositoryIntegrationTest {
 
     private ShopRepository shopRepository;
 
-    // Definiujemy kontener MySQL. Testcontainers automatycznie zarządza jego cyklem życia.
     @Container
     private static final MySQLContainer<?> mysqlContainer = new MySQLContainer<>(DockerImageName.parse("mysql:8.0"))
-            .withDatabaseName("test_sklep_db") // Nazwa bazy danych w kontenerze
-            .withUsername("testuser")        // Nazwa użytkownika
-            .withPassword("testpass");       // Hasło
+            .withDatabaseName("test_sklep_db")
+            .withUsername("testuser")
+            .withPassword("testpass");
 
     @BeforeEach
     void setUp() throws SQLException {
-        // Tworzymy ActualConnectionProvider, który będzie łączył się z uruchomionym kontenerem
+        // Tworzymy ActualConnectionProvider, który będzie łączył się z uruchomionym kontenerem MySQL
         ConnectionProvider connectionProvider = new ActualConnectionProvider(
                 mysqlContainer.getJdbcUrl(),
                 mysqlContainer.getUsername(),
                 mysqlContainer.getPassword()
         );
+        // Tworzymy ShopRepository z PRAWDZIWYM dostawcą połączeń
         shopRepository = new ShopRepository(connectionProvider);
 
         // Inicjalizacja schematu bazy danych i wstawienie danych testowych
@@ -50,9 +50,7 @@ class ShopRepositoryIntegrationTest {
                 mysqlContainer.getPassword());
              Statement stmt = conn.createStatement()) {
 
-            // Usuwamy tabelę, jeśli istnieje, aby zapewnić czysty stan przed każdym testem
             stmt.execute("DROP TABLE IF EXISTS towary");
-            // Tworzymy tabelę
             stmt.execute("CREATE TABLE towary (" +
                     "id_towaru INT PRIMARY KEY," +
                     "nazwa VARCHAR(255) NOT NULL," +
@@ -61,7 +59,6 @@ class ShopRepositoryIntegrationTest {
                     "ilosc_dostepna INT NOT NULL," +
                     "data_dodania DATE NOT NULL)");
 
-            // Wstawiamy przykładowe dane
             stmt.execute("INSERT INTO towary (id_towaru, nazwa, opis, cena_jednostkowa, ilosc_dostepna, data_dodania) VALUES " +
                     "(1, 'Monitor', 'Monitor gamingowy LED', 1500.0, 5, '2024-01-01'), " +
                     "(2, 'Klawiatura', 'Mechaniczna klawiatura RGB', 300.0, 20, '2024-01-10')");
@@ -70,15 +67,14 @@ class ShopRepositoryIntegrationTest {
 
     @Test
     void shouldReturnTowaryFromRealDatabase() throws SQLException {
+        // Wywołujemy metodę getTowary() bez argumentów, tak jak jest zaimplementowana w ShopRepository
         List<Towar> towary = shopRepository.getTowary();
 
-        assertEquals(2, towary.size()); // Oczekujemy dwóch towarów
+        assertEquals(2, towary.size());
 
-        // Weryfikujemy pierwszy towar
         Towar expectedTowar1 = new Towar(1, "Monitor", "Monitor gamingowy LED", 1500.0, 5, Date.valueOf("2024-01-01"));
         assertEquals(expectedTowar1, towary.get(0));
 
-        // Weryfikujemy drugi towar
         Towar expectedTowar2 = new Towar(2, "Klawiatura", "Mechaniczna klawiatura RGB", 300.0, 20, Date.valueOf("2024-01-10"));
         assertEquals(expectedTowar2, towary.get(1));
     }
@@ -94,7 +90,7 @@ class ShopRepositoryIntegrationTest {
             stmt.execute("DELETE FROM towary");
         }
 
-        List<Towar> towary = shopRepository.getTowary();
-        assertTrue(towary.isEmpty()); // Oczekujemy pustej listy
+        List<Towar> towary = shopRepository.getTowary(); // Wywołujemy metodę bez argumentów
+        assertTrue(towary.isEmpty());
     }
 }

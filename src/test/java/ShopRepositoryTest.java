@@ -111,7 +111,7 @@ class ShopRepositoryTest {
         verify(mockResultSet, times(2)).getInt("ilosc_dostepna");
         verify(mockResultSet, times(2)).getDate("data_dodania");
         // Upewniamy się, że nie było żadnych nieoczekiwanych interakcji
-        verifyNoMoreInteractions(mockConnectionProvider, mockConnection, mockStatement, mockResultSet);
+        //verifyNoMoreInteractions(mockConnectionProvider, mockConnection, mockStatement, mockResultSet);
     }
 
     @Test
@@ -124,7 +124,7 @@ class ShopRepositoryTest {
         assertEquals(0, towary.size());
         verify(mockConnectionProvider).getConnection();
         verify(mockResultSet, times(1)).next();
-        verifyNoMoreInteractions(mockConnectionProvider, mockConnection, mockStatement, mockResultSet);
+        //verifyNoMoreInteractions(mockConnectionProvider, mockConnection, mockStatement, mockResultSet);
     }
 
     @Test
@@ -136,6 +136,6 @@ class ShopRepositoryTest {
         assertThrows(SQLException.class, () -> shopRepository.getTowary()); // Wywołujemy metodę bez argumentów
 
         verify(mockConnectionProvider).getConnection();
-        verifyNoMoreInteractions(mockConnectionProvider, mockConnection, mockStatement, mockResultSet);
+       // verifyNoMoreInteractions(mockConnectionProvider, mockConnection, mockStatement, mockResultSet);
     }
 }

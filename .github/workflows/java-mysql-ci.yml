@@ -94,10 +94,10 @@ jobs:
 
       - name: Inspect MySQL service container
         # ZMIENIONO: Szukamy kontenera po obrazie mysql:8.0, pobieramy ID i używamy do inspekcji
-        run: docker ps -a --filter "ancestor=mysql:8.0" --format "{{.ID}}" | xargs -r docker inspect || true
+        run: docker ps -a --filter "ancestor=mysql:8.0" --format "{{.ID}}" | xargs -r docker logs || true
 
       - name: Inspect PostgreSQL Testcontainer (if running)
-        run: docker ps -a --filter "ancestor=postgres:13.3" --format "{{.ID}}" | xargs -r docker inspect || true
+        run: docker ps -a --filter "ancestor=postgres:13.3" --format "{{.ID}}" | xargs -r docker logs || true
 
       - name: View logs of MySQL service container
         # ZMIENIONO: Szukamy kontenera po obrazie mysql:8.0, pobieramy ID i używamy do logów

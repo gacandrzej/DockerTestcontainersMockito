@@ -80,6 +80,14 @@ jobs:
       - name: List contents of bin directory # Tymczasowy krok diagnostyczny
         run: ls -al build/install/sklep-app/bin/
 
+          # Publikowanie raportów testów
+      - name: Upload Test Reports
+        uses: actions/upload-artifact@v3 # Akcja do przesyłania artefaktów
+        with:
+            name: gradle-test-reports # Nazwa artefaktu, pod którą będzie widoczny
+            path: build/reports/tests/test # Ścieżka do katalogu z raportami testów Gradle
+            retention-days: 37 # Opcjonalnie: Czas przechowywania artefaktu (domyślnie 90 dni)
+
       # Opcjonalny krok: uruchomienie głównej aplikacji (jeśli chcesz to przetestować w CI)
       - name: Run Java app (after build)
         run: ./build/install/sklep-app/bin/sklep-app # Nazwa JARa zależy od build.gradle

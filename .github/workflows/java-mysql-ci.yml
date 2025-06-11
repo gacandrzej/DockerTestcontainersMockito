@@ -22,12 +22,12 @@ jobs:
           MYSQL_PASSWORD: ${{ secrets.DB_PASS }} # Hasło z GitHub Secrets
         ports:
           - 3306:3306 # Mapowanie portów: 3306 na hoście do 3306 w kontenerze
+        # Więcej prób dla stabilności - PRZENIESIONO KOMENTARZ POZA BLOK OPCJI
         options: >- # Opcje sprawdzania zdrowia kontenera
           --health-cmd="mysqladmin ping -h 127.0.0.1 -u$MYSQL_USER -p$MYSQL_PASSWORD --silent"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=10
-          # Więcej prób dla stabilności - komentarz przeniesiony na nową linię, aby uniknąć błędu
 
     steps:
       - uses: actions/checkout@v3 # Klonuje repozytorium do runnera

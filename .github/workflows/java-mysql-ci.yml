@@ -19,26 +19,30 @@ jobs:
           MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }} # Hasło root w kontenerze (tylko do celów testowych CI)
           MYSQL_DATABASE: sklep # Nazwa bazy danych
           MYSQL_USER: ${{ secrets.DB_USER }} # Użytkownik z GitHub Secrets
-          MYSQL_PASSWORD: <span class="math-inline">\{\{ secrets\.DB\_PASS \}\} \# Hasło z GitHub Secrets
-ports\:
-\- 3306\:3306 \# Mapowanie portów\: 3306 na hoście do 3306 w kontenerze
-options\: \>\- \# Opcje sprawdzania zdrowia kontenera
-\-\-health\-cmd\="mysqladmin ping \-h 127\.0\.0\.1 \-u</span><span class="math-inline">MYSQL\_USER \-p</span><span class="math-inline">MYSQL\_PASSWORD \-\-silent"
-\-\-health\-interval\=10s
-\-\-health\-timeout\=5s
-\-\-health\-retries\=10 \# Więcej prób dla stabilności
-steps\:
-\- uses\: actions/checkout@v3 \# Klonuje repozytorium do runnera
-\- name\: Set up JDK 17
-uses\: actions/setup\-java@v3 \# Akcja do konfiguracji JDK
-with\:
-distribution\: 'temurin' \# Dystrybucja JDK \(np\. Adoptium\)
-java\-version\: '17' \# Wersja Javy
-cache\: 'gradle' \# Włącza cache dla zależności Gradle, przyspiesza kolejne buildy
-\- name\: Wait for MySQL to be ready \# Czekaj, aż usługa MySQL będzie gotowa
-run\: \|
-for i in \{1\.\.30\}; do \# Pętla próbująca połączenie przez 60 sekund
-if mysqladmin ping \-h 127\.0\.0\.1 \-P 3306 \-u</span>{{ secrets.DB_USER }} -p${{ secrets.DB_PASS }} --silent; then
+          MYSQL_PASSWORD: ${{ secrets.DB_PASS }} # Hasło z GitHub Secrets
+        ports:
+          - 3306:3306 # Mapowanie portów: 3306 na hoście do 3306 w kontenerze
+        options: >- # Opcje sprawdzania zdrowia kontenera
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -u$MYSQL_USER -p$MYSQL_PASSWORD --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10 # Więcej prób dla stabilności
+
+    steps:
+      - uses: actions/checkout@v3 # Klonuje repozytorium do runnera
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3 # Akcja do konfiguracji JDK
+        with:
+          distribution: 'temurin' # Dystrybucja JDK (np. Adoptium)
+          java-version: '17' # Wersja Javy
+          cache: 'gradle' # Włącza cache dla zależności Gradle, przyspiesza kolejne buildy
+
+      - name: Wait for MySQL to be ready # Czekaj, aż usługa MySQL będzie gotowa
+        run: |
+          for i in {1..30}; do # Pętla próbująca połączenie przez 60 sekund
+            # Użyj jawnego odwołania do zmiennych środowiskowych z secrets dla shella
+            if mysqladmin ping -h 127.0.0.1 -P 3306 -u${{ secrets.DB_USER }} -p${{ secrets.DB_PASS }} --silent; then
               echo "MySQL is up!"
               break
             fi

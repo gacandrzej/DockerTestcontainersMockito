@@ -39,7 +39,7 @@ tasks.test {
 // --- STANDARDOWA KONFIGURACJA PLUGINU 'application' W KOTLIN DSL ---
 // Gradle powinien rozpoznać 'application' jako rozszerzenie pluginu
 application {
-    mainClass.set("com.example.sklep.ShopApplication") // Ustawia główną klasę aplikacji
+    mainClass.set("gac.andrzej.sklep.ShopApplication") // Ustawia główną klasę aplikacji
     applicationName = "sklep-app" // Ustawia nazwę katalogu instalacji dla installDist
 }
 

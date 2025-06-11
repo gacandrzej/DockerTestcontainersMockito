@@ -32,7 +32,7 @@ dependencies {
    // testImplementation("org.testcontainers:redis:1.21.1") // Moduł Testcontainers dla Redis
 
     // Zależności dla Kafka
-    implementation("org.apache.kafka:kafka-clients:3.7.0") // Klient Kafka
+    implementation("org.apache.kafka:kafka-clients:3.8.0") // Klient Kafka
     testImplementation("org.testcontainers:kafka:1.21.1") // Moduł Testcontainers dla Kafka
 
     // Mockito (do mockowania w testach jednostkowych)

@@ -66,7 +66,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build with Gradle and run tests # Kompiluje projekt i uruchamia wszystkie testy (jednostkowe i integracyjne)
-        run: ./gradlew installDist # Uruchamia Gradle Wrapper
+        run: ./gradlew installDist test # Uruchamia Gradle Wrapper
         env:
           # Przekazujemy zmienne środowiskowe, które Twoja aplikacja (ShopApplication) będzie odczytywać
           DB_URL: jdbc:mysql://127.0.0.1:3306/sklep

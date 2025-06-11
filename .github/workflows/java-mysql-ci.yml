@@ -62,6 +62,9 @@ jobs:
         env:
           MYSQL_CLIENT_PWD: ${{ secrets.DB_PASS }} # Upewnij się, że klient MySQL może użyć hasła
 
+      - name: Grant execute permission to gradlew # NOWY KROK: Nadaje uprawnienia do wykonywania plikowi gradlew
+        run: chmod +x gradlew
+
       - name: Build with Gradle and run tests # Kompiluje projekt i uruchamia wszystkie testy (jednostkowe i integracyjne)
         run: ./gradlew build # Uruchamia Gradle Wrapper
         env:

@@ -16,7 +16,7 @@ jobs:
       mysql:
         image: mysql:8.0 # Obraz Docker MySQL
         env:
-          MYSQL_ROOT_PASSWORD: root # Hasło root w kontenerze (tylko do celów testowych CI)
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }} # Hasło root w kontenerze (tylko do celów testowych CI)
           MYSQL_DATABASE: sklep # Nazwa bazy danych
           MYSQL_USER: ${{ secrets.DB_USER }} # Użytkownik z GitHub Secrets
           MYSQL_PASSWORD: <span class="math-inline">\{\{ secrets\.DB\_PASS \}\} \# Hasło z GitHub Secrets

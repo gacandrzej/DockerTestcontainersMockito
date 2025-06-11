@@ -1,5 +1,4 @@
 package gac.andrzej.sklep;
-
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -41,10 +40,29 @@ public class KafkaMessageConsumer implements Runnable {
             ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
             for (ConsumerRecord<String, String> record : records) {
                 receivedMessages.add(record.value());
-                System.out.println("Consumed message: " + record.value()); // Debug log
+                // System.out.println("Consumed message: " + record.value()); // Debug log - można odkomentować w razie potrzeby
             }
         }
         consumer.close();
+    }
+
+    /**
+     * Oczekuje na określoną liczbę wiadomości lub przekroczenie limitu czasu.
+     * @param expectedMessageCount Oczekiwana liczba wiadomości.
+     * @param timeout Czas oczekiwania w milisekundach.
+     * @return true, jeśli otrzymano oczekiwaną liczbę wiadomości w limicie czasu, false w przeciwnym razie.
+     */
+    public boolean waitUntilMessagesReceived(int expectedMessageCount, long timeout) {
+        long startTime = System.currentTimeMillis();
+        while (receivedMessages.size() < expectedMessageCount && (System.currentTimeMillis() - startTime < timeout)) {
+            try {
+                Thread.sleep(50); // Krótka pauza przed kolejnym sprawdzeniem
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return false;
+            }
+        }
+        return receivedMessages.size() >= expectedMessageCount;
     }
 
     public void stop() {

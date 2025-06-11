@@ -15,6 +15,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -92,13 +93,13 @@ class ShopRepositorySqliteIntegrationTest {
         assertEquals("Książka SQLite", actualTowar1.getNazwa());
         assertEquals(50.0, actualTowar1.getCenaJednostkowa());
         assertEquals(100, actualTowar1.getIloscDostepna());
-        assertEquals(Date.valueOf("2024-03-01"), actualTowar1.getDataDodania());
+        assertEquals(LocalDate.of(2024, 3, 1), actualTowar1.getDataDodania().toLocalDate());
 
         Towar actualTowar2 = towary.get(1);
         assertEquals("Długopis SQLite", actualTowar2.getNazwa());
         assertEquals(5.0, actualTowar2.getCenaJednostkowa());
         assertEquals(500, actualTowar2.getIloscDostepna());
-        assertEquals(Date.valueOf("2024-03-05"), actualTowar2.getDataDodania());
+        assertEquals(LocalDate.of(2024, 3, 5), actualTowar2.getDataDodania().toLocalDate());
     }
 
     @Test

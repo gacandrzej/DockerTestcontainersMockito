@@ -1,6 +1,6 @@
 plugins {
     id("java")           // Włącza wsparcie dla projektów Java
-   // id("application")    // Umożliwia uruchamianie aplikacji z metodą main
+    id("application")    // Umożliwia uruchamianie aplikacji z metodą main
 }
 
 group = "gac.andrzej"    // Grupa projektu
@@ -38,7 +38,15 @@ tasks.test {
     useJUnitPlatform()
 }
 
-// Konfiguracja dla wtyczki 'application' - wskazuje główną klasę z metodą main
 //application {
 //    mainClass = 'gac.andrzej.sklep.ShopApplication'
+//}
+//
+//// WAŻNE: Upewnij się, że ten blok `jar` jest obecny i poprawnie konfiguruje Main-Class.
+//// Jeśli używasz tylko pluginu `application`, Gradle powinien to zrobić automatycznie,
+//// ale warto to sprawdzić lub dodać dla pewności.
+//jar {
+//    manifest {
+//        attributes 'Main-Class': application.mainClass.get()
+//    }
 //}

@@ -66,7 +66,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build with Gradle and run tests # Kompiluje projekt i uruchamia wszystkie testy (jednostkowe i integracyjne)
-        run: ./gradlew build # Uruchamia Gradle Wrapper
+        run: ./gradlew installDist # Uruchamia Gradle Wrapper
         env:
           # Przekazujemy zmienne środowiskowe, które Twoja aplikacja (ShopApplication) będzie odczytywać
           DB_URL: jdbc:mysql://127.0.0.1:3306/sklep
@@ -75,7 +75,7 @@ jobs:
 
       # Opcjonalny krok: uruchomienie głównej aplikacji (jeśli chcesz to przetestować w CI)
       - name: Run Java app (after build)
-        run: java -jar build/libs/java-mysql-ci-1.0-SNAPSHOT.jar # Nazwa JARa zależy od build.gradle
+        run: ./build/install/java-mysql-ci/bin/ShopApplication # Nazwa JARa zależy od build.gradle
         env:
           DB_URL: jdbc:mysql://127.0.0.1:3306/sklep
           DB_USER: ${{ secrets.DB_USER }}

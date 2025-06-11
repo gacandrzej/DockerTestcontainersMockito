@@ -19,8 +19,21 @@ dependencies {
     // JUnit Jupiter - zawiera API i Engine
     testImplementation("org.junit.jupiter:junit-jupiter")
 
+    implementation("org.xerial:sqlite-jdbc:3.45.2.0")    // Sterownik JDBC dla SQLite
     implementation("mysql:mysql-connector-java:8.0.33") // Sterownik JDBC dla MySQL
     implementation("org.postgresql:postgresql:42.7.3") // Sterownik JDBC dla PostgreSQL (sprawdź najnowszą stabilną wersję)
+
+    // Zależności dla MongoDB
+    implementation("org.mongodb:mongodb-driver-sync:4.11.1") // Sterownik MongoDB (synchronous)
+    testImplementation("org.testcontainers:mongodb:1.19.8") // Moduł Testcontainers dla MongoDB
+
+    // Zależności dla Redis
+    implementation("redis.clients:jedis:5.1.3") // Klient Jedis dla Redis
+    testImplementation("org.testcontainers:redis:1.19.8") // Moduł Testcontainers dla Redis
+
+    // Zależności dla Kafka
+    implementation("org.apache.kafka:kafka-clients:3.7.0") // Klient Kafka
+    testImplementation("org.testcontainers:kafka:1.19.8") // Moduł Testcontainers dla Kafka
 
     // Mockito (do mockowania w testach jednostkowych)
     testImplementation("org.mockito:mockito-core:5.11.0")

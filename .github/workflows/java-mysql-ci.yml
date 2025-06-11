@@ -88,21 +88,6 @@ jobs:
             path: build/reports/tests/test # Ścieżka do katalogu z raportami testów Gradle
             retention-days: 37 # Opcjonalnie: Czas przechowywania artefaktu (domyślnie 90 dni)
 
-      # --- NOWE KROKI DIAGNOSTYCZNE DOCKER (ZMIENIONO DLA MYSQL) ---
-      - name: List all Docker containers (after tests)
-        run: docker ps -a
-
-      - name: Inspect MySQL service container
-        # ZMIENIONO: Szukamy kontenera po obrazie mysql:8.0, pobieramy ID i używamy do inspekcji
-        run: docker ps -a --filter "ancestor=mysql:8.0" --format "{{.ID}}" | xargs -r docker logs || true
-
-      - name: Inspect PostgreSQL Testcontainer (if running)
-        run: docker ps -a --filter "ancestor=postgres:13.3" --format "{{.ID}}" | xargs -r docker logs || true
-
-      - name: View logs of MySQL service container
-        # ZMIENIONO: Szukamy kontenera po obrazie mysql:8.0, pobieramy ID i używamy do logów
-        run: docker ps -a --filter "ancestor=mysql:8.0" --format "{{.ID}}" | xargs -r docker logs || true
-      # --- KONIEC ZMIENIONYCH KROKÓW DIAGNOSTYCZNYCH DOCKER ---
 
       # Opcjonalny krok: uruchomienie głównej aplikacji (jeśli chcesz to przetestować w CI)
       - name: Run Java app (after build)

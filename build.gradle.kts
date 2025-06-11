@@ -25,24 +25,24 @@ dependencies {
 
     // Zależności dla MongoDB
     implementation("org.mongodb:mongodb-driver-sync:4.11.1") // Sterownik MongoDB (synchronous)
-    testImplementation("org.testcontainers:mongodb:1.19.8") // Moduł Testcontainers dla MongoDB
+    testImplementation("org.testcontainers:mongodb:1.21.1") // Moduł Testcontainers dla MongoDB
 
     // Zależności dla Redis
     implementation("redis.clients:jedis:5.1.3") // Klient Jedis dla Redis
-    testImplementation("org.testcontainers:redis:1.19.8") // Moduł Testcontainers dla Redis
+    testImplementation("org.testcontainers:redis:1.21.1") // Moduł Testcontainers dla Redis
 
     // Zależności dla Kafka
     implementation("org.apache.kafka:kafka-clients:3.7.0") // Klient Kafka
-    testImplementation("org.testcontainers:kafka:1.19.8") // Moduł Testcontainers dla Kafka
+    testImplementation("org.testcontainers:kafka:1.21.1") // Moduł Testcontainers dla Kafka
 
     // Mockito (do mockowania w testach jednostkowych)
     testImplementation("org.mockito:mockito-core:5.11.0")
     testImplementation("org.mockito:mockito-junit-jupiter:5.11.0") // Integracja Mockito z JUnit 5
 
     // Testcontainers (do testów integracyjnych z Dockerem)
-    testImplementation("org.testcontainers:testcontainers:1.19.8")
-    testImplementation("org.testcontainers:junit-jupiter:1.19.8") // Integracja Testcontainers z JUnit 5
-    testImplementation("org.testcontainers:mysql:1.19.8")        // Moduł Testcontainers dla MySQL
+    testImplementation("org.testcontainers:testcontainers:1.21.1")
+    testImplementation("org.testcontainers:junit-jupiter:1.21.1") // Integracja Testcontainers z JUnit 5
+    testImplementation("org.testcontainers:mysql:1.21.1")        // Moduł Testcontainers dla MySQL
     testImplementation("org.testcontainers:postgresql:1.21.1") // Moduł Testcontainers dla PostgreSQL
 }
 

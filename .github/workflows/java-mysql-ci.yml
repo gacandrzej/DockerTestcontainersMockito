@@ -91,14 +91,14 @@ jobs:
           name: junit-xml-reports
           path: build/test-results/test
 
-      - name: Publish Test Results to GitHub
+      - name: Publish Test Report to GitHub Checks
         uses: dorny/test-reporter@v1
         if: always()
         with:
-          name: Gradle Tests
+          name: JUnit Test Report
           path: build/test-results/test/*.xml
-          reporter: junit
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: java-junit
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       # Docker: logowanie i push do GHCR
       - name: Log in to GitHub Container Registry

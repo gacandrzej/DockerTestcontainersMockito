@@ -86,7 +86,7 @@ jobs:
 
       # Upload raportów testów
       - name: Upload Test Reports XML
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: junit-xml-reports
           path: build/test-results/test

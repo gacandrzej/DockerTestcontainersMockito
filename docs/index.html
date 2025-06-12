@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sklep Java + Docker</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2em;
+            background: #f9f9f9;
+            color: #333;
+        }
+        h1, h2 {
+            color: #2c3e50;
+        }
+        pre {
+            background: #efefef;
+            padding: 1em;
+            overflow-x: auto;
+        }
+        code {
+            font-family: monospace;
+        }
+        .footer {
+            margin-top: 4em;
+            font-size: 0.9em;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+
+<h1>🛍️ Sklep Java + Docker</h1>
+
+<p>
+    Ten projekt to prosta aplikacja sklepu napisana w Javie, która łączy się z bazą danych i wyświetla dostępne towary.
+    Całość można uruchomić jako kontener Docker dzięki gotowemu obrazowi na <strong>GitHub Container Registry</strong>.
+</p>
+
+<h2>📦 Obraz Docker</h2>
+<p>Obraz dostępny jest pod adresem:</p>
+<pre><code>ghcr.io/gacandrzej/sklep-app:latest</code></pre>
+
+<h3>🔧 Jak uruchomić</h3>
+<p>Pobierz i uruchom obraz z odpowiednimi zmiennymi środowiskowymi:</p>
+<pre><code>
+docker run --rm \
+  -e DB_URL="jdbc:mysql://host:port/nazwa_bazy" \
+  -e DB_USER="uzytkownik" \
+  -e DB_PASS="haslo" \
+  ghcr.io/gacandrzej/sklep-app:latest
+    </code></pre>
+
+<h2>🧠 Główna klasa aplikacji</h2>
+<p>Aplikacja startuje w klasie <code>ShopApplication</code>:</p>
+<pre><code>
+public class ShopApplication {
+    public static void main(String[] args) {
+        final String DB_URL = System.getenv("DB_URL");
+        final String USER = System.getenv("DB_USER");
+        final String PASS = System.getenv("DB_PASS");
+
+        if (DB_URL == null || USER == null || PASS == null) {
+            System.err.println("Brak wymaganych zmiennych środowiskowych");
+            System.exit(1);
+        }
+
+        ConnectionProvider connectionProvider = new ActualConnectionProvider(DB_URL, USER, PASS);
+        ShopRepository shopRepository = new ShopRepository(connectionProvider);
+
+        try {
+            List&lt;Towar&gt; towary = shopRepository.getTowary();
+            towary.forEach(System.out::println);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
+    </code></pre>
+
+<h2>🗃️ Wymagania</h2>
+<ul>
+    <li>Java 17+</li>
+    <li>Baza danych MySQL lub zgodna z JDBC</li>
+    <li>Docker (jeśli uruchamiasz przez kontener)</li>
+</ul>
+
+<h2>📚 Struktura projektu</h2>
+<ul>
+    <li><code>ShopApplication</code> – punkt wejścia aplikacji</li>
+    <li><code>ShopRepository</code> – dostęp do danych z bazy</li>
+    <li><code>Towar</code> – model danych produktu</li>
+    <li><code>ConnectionProvider</code> – abstrakcja dostępu do połączenia JDBC</li>
+</ul>
+
+<div class="footer">
+    © 2025 gac.andrzej | Kod źródłowy na <a href="https://github.com/gacandrzej/sklep-app">GitHub</a>
+</div>
+
+</body>
+</html>

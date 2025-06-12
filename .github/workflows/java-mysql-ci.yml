@@ -7,6 +7,10 @@ on:
       - master # Uruchom workflow przy pushu do gałęzi master
   workflow_dispatch: # Umożliwia ręczne uruchomienie workflow z UI GitHub
 
+permissions:
+  contents: read
+  checks: write
+
 jobs:
   build:
     runs-on: ubuntu-latest # Wybierz system operacyjny dla runnera
@@ -98,7 +102,6 @@ jobs:
           name: JUnit Test Report
           path: build/test-results/test/*.xml
           reporter: java-junit
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       # Docker: logowanie i push do GHCR
       - name: Log in to GitHub Container Registry

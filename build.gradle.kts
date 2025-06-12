@@ -49,6 +49,10 @@ dependencies {
 // Konfiguracja do uruchamiania testów z JUnit 5
 tasks.test {
     useJUnitPlatform()
+    reports {
+        junitXml.required.set(true)
+        html.required.set(true)
+    }
 }
 
 
